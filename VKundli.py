@@ -5,9 +5,10 @@ import appGUI.dataGUI
 if __name__ == "__main__":
     root = tkinter.Tk()
     mframe = tkinter.Frame(root)
+    root.title("VKundli")
     root.resizable(width=False, height=False)
     root.geometry("700x500")
-    root.iconbitmap("zodiac_zodiac sign_icon_capricorn.ico")
+    root.iconbitmap("zodiac_zodiac_sign_icon_capricorn.ico")
     # mframe.config(background="green")
     image_pos = None
     with open("img_pos.json", "r") as opn:
