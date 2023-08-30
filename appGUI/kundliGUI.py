@@ -22,7 +22,7 @@ class AppLabelText:
     
 
 class KundliGUI:
-    def __init__(self, root, birth_chart, transit_chart, image_pos, kundli_desgin):
+    def __init__(self, root, birth_chart, navamsa_chart, transit_chart, image_pos, kundli_desgin):
         self.window = tkinter.Toplevel(root)
         self.window.title("Kundli")
         self.window.iconbitmap("zodiac_zodiac_sign_icon_capricorn.ico")
@@ -30,12 +30,14 @@ class KundliGUI:
         self.kundli_design = kundli_desgin
         self.image_pos     = image_pos 
         self.birth_chart   = birth_chart
+        self.navamsa_chart = navamsa_chart
         self.transit_chart = transit_chart
         self.birth_chart_planet   = {}
         self.transit_chart_planet = {}
         self.lbl_text      = AppLabelText(self.window)
         self.lagna         = tkinter.Button(self.window, text="Lagna Kundli", command=self.lagnaKundli)
         self.transit       = tkinter.Button(self.window, text="Transit Kundli", command=self.transitKundli)
+        self.navamsa       = tkinter.Button(self.window, text="Navamsa Kundli", command=self.navamsaKundli)
         self.planets_label = {
             "asc":self.lbl_text.lbl_asc, "su":self.lbl_text.lbl_sun, "mo":self.lbl_text.lbl_moon, "me":self.lbl_text.lbl_mercury, "ve":self.lbl_text.lbl_venus, "ma":self.lbl_text.lbl_mars, 
             "ju":self.lbl_text.lbl_jupiter,"sa":self.lbl_text.lbl_saturn, "ra":self.lbl_text.lbl_rahu, "ke":self.lbl_text.lbl_ketu, "ne":self.lbl_text.lbl_neptune, "ur":self.lbl_text.lbl_uranus,
@@ -50,6 +52,7 @@ class KundliGUI:
         self.get_planet_data(self.transit_chart, 1)
         self.birth_chart_img   = self.write_to_image(self.birth_chart, self.image_pos, self.kundli_design, 0)
         self.transit_chart_img = self.write_to_image(self.transit_chart, self.image_pos, self.kundli_design, 1)
+        self.navamsa_chart_img = self.write_to_image(self.navamsa_chart, self.image_pos, self.kundli_design, 2)
 
         self.lbl_img = tkinter.Label(self.window, width=700, height=500)
         
@@ -71,13 +74,22 @@ class KundliGUI:
 
         self.lbl_img.place(x=10, y=36)
         self.lagna.place(x=740, y=40)
-        self.transit.place(x=826, y=40)
+        self.navamsa.place(x=826, y=40)
+        self.transit.place(x=926, y=40)
         self.lagnaKundli()
         self.window.mainloop()
     
     def lagnaKundli(self):
         self.lbl_text.lbl_chart.configure(text="Lagna Chart")
         img = ImageTk.PhotoImage(self.birth_chart_img.filter(ImageFilter.SMOOTH).resize((700,500)))
+        self.lbl_img.configure(image=img)
+        self.lbl_img.image = img
+        for item in self.birth_chart_planet:
+            self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()], self.birth_chart_planet[item]))
+    
+    def navamsaKundli(self):
+        self.lbl_text.lbl_chart.configure(text="Navamsa Chart(might be inaccurate)")
+        img = ImageTk.PhotoImage(self.navamsa_chart_img.filter(ImageFilter.SMOOTH).resize((700,500)))
         self.lbl_img.configure(image=img)
         self.lbl_img.image = img
         for item in self.birth_chart_planet:
@@ -121,6 +133,20 @@ class KundliGUI:
                         draw.text((image_pos[item]["planet_pos"][0], image_pos[item]["planet_pos"][1]+temp), planet, (0,0,0), font=font_planet)
                         temp += 30
                 house += 1
+        elif mode == 2:
+            for item in image_pos:
+                draw.text(image_pos[item]["sign_pos"], str(kundli[str(house)]["sign_num"]), (0,0,0), font=font_sign)
+                temp = 0
+                if house == 1 and len(kundli[str(house)]["asc"]) != 0:
+                    draw.text((image_pos[item]["planet_pos"][0], image_pos[item]["planet_pos"][1]+temp), "Asc", (0,0,0), font=font_planet)
+                    temp += 30
+                if len(kundli[str(house)]["planets"]) != 0:
+                    for planet in kundli[str(house)]["planets"]:
+                        draw.text((image_pos[item]["planet_pos"][0], image_pos[item]["planet_pos"][1]+temp), planet, (0,0,0), font=font_planet)
+                        temp += 30
+                house += 1
+        
+        
         return img
 
     def get_planet_data(self, kundli, mode):
@@ -141,7 +167,4 @@ class KundliGUI:
                 if len(kundli[house]["planets"]) != 0:
                     for planet in kundli[house]["planets"]:
                         self.transit_chart_planet[planet] = kundli[house]["planets"][planet].strip("+")
-        
-    
 
-    

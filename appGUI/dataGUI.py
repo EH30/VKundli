@@ -58,6 +58,15 @@ class App:
         self.app_label     = AppLabel(root)
         self.app_button    = AppButton(root, self.gen_kundli)
         self.app_dropdownlist = AppDropDownList(root)
+        self.navamasa_mfd = {
+            "move": [1,4,7,10],
+            "fixed": [2,5,8,11],
+            "dual": [3,6,9,12]
+        }
+        self.navamasa_degree = [
+            [ 0,   3.2, 6.4, 10  , 13.2, 16.4, 20  ,  23.2, 26.4 ],
+            [ 3.2, 6.4, 10,  13.2, 16.4, 20  , 23.2,  26.4, 30   ]
+        ]
 
     def gen_kundli(self):
         name   = self.get_name()
@@ -99,8 +108,9 @@ class App:
 
         birth_chart   = GKundli.GKundli(year, month, day, hour, minute, utc, lat, lon).lagnaChart()
         transit_chart = GKundli.GKundli(year, month, day, hour, minute, utc, lat, lon).transitChart(birth_chart)
+        navamsa_chart = self.navamsaChart(birth_chart)
 
-        appGUI.kundliGUI.KundliGUI(self.top, birth_chart, transit_chart, self.image_pos, self.kundli_design)
+        appGUI.kundliGUI.KundliGUI(self.top, birth_chart, navamsa_chart, transit_chart, self.image_pos, self.kundli_design)
     
     def get_name(self):
         data = self.app_entry.ent_name.get()
@@ -108,6 +118,79 @@ class App:
             return -1 
         
         return data.strip()
+    
+    def get_start_count(self, sign_num, pos, current_house):
+        if sign_num in self.navamasa_mfd["move"]:
+            start_house = current_house
+            for i in range(len(self.navamasa_degree[0])):
+                if pos >= self.navamasa_degree[0][i] and pos <= self.navamasa_degree[1][i]:
+                    house_to_count = i+1
+                    current_house = start_house+house_to_count
+                    return [start_house+1, house_to_count]
+        elif sign_num in self.navamasa_mfd["fixed"]:
+            start_house = 9+current_house if 9+current_house <= 12 else 9+current_house-12 
+            for i in range(len(self.navamasa_degree[0])):
+                if pos >= self.navamasa_degree[0][i] and pos <= self.navamasa_degree[1][i]:
+                    house_to_count = i+1
+                    current_house = start_house+house_to_count
+                    return [start_house, house_to_count]
+        elif sign_num in self.navamasa_mfd["dual"]:
+            start_house = 5+current_house if 9+current_house <= 12 else 5+current_house-12
+            for i in range(len(self.navamasa_degree[0])):
+                if pos >= self.navamasa_degree[0][i] and pos <= self.navamasa_degree[1][i]:
+                    house_to_count= i+1
+                    current_house = start_house+house_to_count
+                    return [start_house, house_to_count]
+        
+
+    def navamsaChart(self, kundli):
+        asc = [int(kundli["1"]["sign_num"]),   float(kundli["1"]["asc"][1]
+                                                     +kundli["1"]["asc"][2]+"."+kundli["1"]["asc"][4]
+                                                     +kundli["1"]["asc"][5]) ]
+        houses = {
+            "1":{"sign_num":1, "asc":kundli["1"]["asc"], "planets":[]},
+            "2":{"sign_num":2, "planets":[]},
+            "3":{"sign_num":3, "planets":[]},
+            "4":{"sign_num":4, "planets":[]},
+            "5":{"sign_num":5, "planets":[]},
+            "6":{"sign_num":6, "planets":[]},
+            "7":{"sign_num":7, "planets":[]},
+            "8":{"sign_num":8, "planets":[]},
+            "9":{"sign_num":9, "planets":[]},
+            "10":{"sign_num":10, "planets":[]},
+            "11":{"sign_num":11, "planets":[]},
+            "12":{"sign_num":12, "planets":[]}
+        }
+        count_house = self.get_start_count(asc[0], asc[1], 1-1)
+        temp = count_house[0]-1
+        for _ in range(count_house[1]):
+            temp += 1
+            if temp > 12:
+                temp = 1
+        
+        for i in range(12):
+            houses[str(i+1)]["sign_num"] = kundli[str(temp)]["sign_num"]
+            temp += 1
+            if temp > 12:
+                temp = temp-12
+        
+        for house in kundli:
+            if len(kundli[house]["planets"]) != 0:
+                for item in kundli[house]["planets"]:
+                    count_house = self.get_start_count(kundli[house]["sign_num"], float(kundli[house]["planets"][item][1]
+                                                                                        +kundli[house]["planets"][item][2]+"."+kundli[house]["planets"][item][4]
+                                                                                        +kundli[house]["planets"][item][5]   ), int(house)-1)
+                    temp = count_house[0]-1
+                    for _ in range(count_house[1]):
+                        temp += 1
+                        if temp > 12:
+                            temp = 1
+                    
+                    rashi = kundli[str(temp)]["sign_num"]
+                    for i in houses:
+                        if houses[i]["sign_num"] == rashi:
+                            houses[i]["planets"].append(item)
+        return houses
     
     def get_year(self):
         data = self.app_entry.ent_year.get().lower().strip("am pm")
