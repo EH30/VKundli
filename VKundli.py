@@ -8,8 +8,7 @@ if __name__ == "__main__":
     root.title("VKundli")
     root.resizable(width=False, height=False)
     root.geometry("700x500")
-    root.iconbitmap("zodiac_zodiac_sign_icon_capricorn.ico")
-    # mframe.config(background="green")
+    root.iconbitmap("kundli-icon.ico")
     image_pos = None
     with open("img_pos.json", "r") as opn:
         image_pos = json.load(opn)

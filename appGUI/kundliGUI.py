@@ -25,7 +25,7 @@ class KundliGUI:
     def __init__(self, root, birth_chart, navamsa_chart, transit_chart, image_pos, kundli_desgin):
         self.window = tkinter.Toplevel(root)
         self.window.title("Kundli")
-        self.window.iconbitmap("zodiac_zodiac_sign_icon_capricorn.ico")
+        self.window.iconbitmap("kundli-icon.ico")
         self.window.geometry("1050x590")
         self.kundli_design = kundli_desgin
         self.image_pos     = image_pos 
