@@ -204,7 +204,7 @@ class App:
     
     def get_month(self):
         # data = self.app_entry.ent_month.get().lower().strip("am pm")
-        data = self.app_dropdownlist.droplist_months.get()
+        data = self.app_dropdownlist.droplist_months.get().strip()
         if len(data) == 0:
             return -1 
         
@@ -215,7 +215,7 @@ class App:
     
     def get_day(self):
         # data = self.app_entry.ent_day.get().lower().strip("am pm")
-        data = self.app_dropdownlist.droplist_days.get()
+        data = self.app_dropdownlist.droplist_days.get().strip()
         if len(data) == 0:
             return -1 
         
@@ -240,7 +240,7 @@ class App:
     
     def get_hour(self):
         # data = self.app_entry.ent_hour.get().lower().strip("am pm")
-        data = self.app_dropdownlist.droplist_hour.get()
+        data = self.app_dropdownlist.droplist_hour.get().strip()
         if len(data) == 0:
             return -1 
         

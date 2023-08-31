@@ -88,7 +88,7 @@ class KundliGUI:
             self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()], self.birth_chart_planet[item]))
     
     def navamsaKundli(self):
-        self.lbl_text.lbl_chart.configure(text="Navamsa Chart(might be inaccurate)")
+        self.lbl_text.lbl_chart.configure(text="Navamsa Chart")
         img = ImageTk.PhotoImage(self.navamsa_chart_img.filter(ImageFilter.SMOOTH).resize((700,500)))
         self.lbl_img.configure(image=img)
         self.lbl_img.image = img
