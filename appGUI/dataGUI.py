@@ -110,7 +110,8 @@ class App:
         transit_chart = GKundli.GKundli(year, month, day, hour, minute, utc, lat, lon).transitChart(birth_chart)
         navamsa_chart = self.navamsaChart(birth_chart)
 
-        appGUI.kundliGUI.KundliGUI(self.top, birth_chart, navamsa_chart, transit_chart, self.image_pos, self.kundli_design)
+        appGUI.kundliGUI.KundliGUI(self.top, birth_chart, navamsa_chart,
+                                    transit_chart, self.image_pos, self.kundli_design, name, year, month, day, hour, minute, lat, lon, utc)
     
     def get_name(self):
         data = self.app_entry.ent_name.get()
