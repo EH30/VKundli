@@ -143,6 +143,9 @@ class KundliGUI:
         self.lbl_img.configure(image=img)
         self.lbl_img.image = img
         for item in self.birth_chart_planet:
+            self.planets_label[item.lower()].configure(text="{0} = ".format(self.planets_full_name[item.lower()]))
+        
+        for item in self.birth_chart_planet:
             self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()], self.birth_chart_planet[item]))
     
     def navamsaKundli(self):
@@ -151,6 +154,9 @@ class KundliGUI:
         self.lbl_img.configure(image=img)
         self.lbl_img.image = img
         for item in self.birth_chart_planet:
+            self.planets_label[item.lower()].configure(text="{0} = ".format(self.planets_full_name[item.lower()]))
+
+        for item in self.birth_chart_planet:
             self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()], self.birth_chart_planet[item]))
         
     def transitKundli(self):
@@ -158,6 +164,9 @@ class KundliGUI:
         img = ImageTk.PhotoImage(self.transit_chart_img.filter(ImageFilter.SMOOTH).resize((700,500)))
         self.lbl_img.configure(image=img)
         self.lbl_img.image = img
+        for item in self.transit_chart_planet:
+            self.planets_label[item.lower()].configure(text="{0} = ".format(self.planets_full_name[item.lower()]))
+        
         for item in self.transit_chart_planet:
             self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()],self.transit_chart_planet[item]))
     
@@ -225,4 +234,3 @@ class KundliGUI:
                 if len(kundli[house]["planets"]) != 0:
                     for planet in kundli[house]["planets"]:
                         self.transit_chart_planet[planet] = kundli[house]["planets"][planet].strip("+")
-
