@@ -36,7 +36,7 @@ class AppLabelText:
     
 
 class KundliGUI:
-    def __init__(self, root, birth_chart, navamsa_chart,transit_chart,image_pos, kundli_desgin,
+    def __init__(self, root, birth_chart, navamsa_chart, transit_chart, moon_chart, image_pos, kundli_desgin,
                 name, year, month, day, hour, minute, latitude, longitude, utc):
         self.window = tkinter.Toplevel(root)
         self.window.title("Kundli")
@@ -56,12 +56,14 @@ class KundliGUI:
         self.birth_chart   = birth_chart
         self.navamsa_chart = navamsa_chart
         self.transit_chart = transit_chart
+        self.moon_chart    = moon_chart
         self.birth_chart_planet   = {}
         self.transit_chart_planet = {}
         self.lbl_text          = AppLabelText(self.window)
         self.btn_lagna         = tkinter.Button(self.window, text="Lagna Kundli", command=self.lagnaKundli)
         self.btn_transit       = tkinter.Button(self.window, text="Transit Kundli", command=self.transitKundli)
         self.btn_navamsa       = tkinter.Button(self.window, text="Navamsa Kundli", command=self.navamsaKundli)
+        self.btn_moon          = tkinter.Button(self.window, text="Moon Kundli", command=self.moonKundli)
         self.btn_save          = tkinter.Button(self.window, text="Save", command=self.saveFiles, width=9, padx=5)
         self.planets_label = {
             "asc":self.lbl_text.lbl_asc, "su":self.lbl_text.lbl_sun, "mo":self.lbl_text.lbl_moon, "me":self.lbl_text.lbl_mercury, "ve":self.lbl_text.lbl_venus, "ma":self.lbl_text.lbl_mars, 
@@ -78,6 +80,7 @@ class KundliGUI:
         self.birth_chart_img   = self.write_to_image(self.birth_chart, self.image_pos, self.kundli_design, 0)
         self.transit_chart_img = self.write_to_image(self.transit_chart, self.image_pos, self.kundli_design, 1)
         self.navamsa_chart_img = self.write_to_image(self.navamsa_chart, self.image_pos, self.kundli_design, 2)
+        self.moon_chart_img    = self.write_to_image(self.moon_chart, self.image_pos, self.kundli_design, 1)
 
         self.lbl_img = tkinter.Label(self.window, width=700, height=500)
         
@@ -123,6 +126,7 @@ class KundliGUI:
         self.btn_navamsa.place(x=826, y=40)
         self.btn_transit.place(x=926, y=40)
         self.btn_save.place(x=740, y=70)
+        self.btn_moon.place(x=826, y=70)
         self.lagnaKundli()
         self.window.mainloop()
     
@@ -131,10 +135,12 @@ class KundliGUI:
         now_time = datetime.datetime.now().strftime("%H-%M-%S_%Y-%m-%d")
         filename_lagna = "{0}_lagna_{1}.png".format(self.name, now_time) 
         filename_navamsa = "{0}_navamsa_{1}.png".format(self.name, now_time)
-        filename_transit = "{0}_transit{1}.png".format(self.name, now_time)
+        filename_transit = "{0}_transit_{1}.png".format(self.name, now_time)
+        filename_moon    = "{0}_moon_{1}.png".format(self.name, now_time)
         self.birth_chart_img.save(os.path.join(folder, filename_lagna))
         self.navamsa_chart_img.save(os.path.join(folder, filename_navamsa))
         self.transit_chart_img.save(os.path.join(folder, filename_transit))
+        self.moon_chart_img.save(os.path.join(folder, filename_moon))
         messagebox.showinfo("Files Saved", "Saved to: {0}".format(folder))
 
     def lagnaKundli(self):
@@ -170,6 +176,18 @@ class KundliGUI:
         for item in self.transit_chart_planet:
             self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()],self.transit_chart_planet[item]))
     
+    def moonKundli(self):
+        self.lbl_text.lbl_chart.configure(text="Moon Chart")
+        img = ImageTk.PhotoImage(self.moon_chart_img.filter(ImageFilter.SMOOTH).resize((700,500)))
+        self.lbl_img.configure(image=img)
+        self.lbl_img.image = img
+        for item in self.birth_chart_planet:
+            self.planets_label[item.lower()].configure(text="{0} = ".format(self.planets_full_name[item.lower()]))
+        
+        for item in self.birth_chart_planet:
+            self.planets_label[item.lower()].configure(text="{0} = {1}".format(self.planets_full_name[item.lower()], self.birth_chart_planet[item]))
+    
+
     def write_to_image(self, kundli, image_pos, kundli_img, mode):
         img = Image.open(kundli_img)
         font_sign   = ImageFont.truetype("arial.ttf", 24)

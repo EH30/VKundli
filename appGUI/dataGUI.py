@@ -109,10 +109,49 @@ class App:
         birth_chart   = GKundli.GKundli(year, month, day, hour, minute, utc, lat, lon).lagnaChart()
         transit_chart = GKundli.GKundli(year, month, day, hour, minute, utc, lat, lon).transitChart(birth_chart)
         navamsa_chart = self.navamsaChart(birth_chart)
+        moon_chart    = self.get_moon_chart(birth_chart)
 
         appGUI.kundliGUI.KundliGUI(self.top, birth_chart, navamsa_chart,
-                                    transit_chart, self.image_pos, self.kundli_design, name, year, month, day, hour, minute, lat, lon, utc)
+                                    transit_chart, moon_chart, self.image_pos, self.kundli_design, name, year, month, day, hour, minute, lat, lon, utc)
     
+    def get_moon_chart(self, lagnaKundli):
+        houses = {
+            "1":{"sign_num":0, "asc":None, "planets":[]},
+            "2":{"sign_num":0, "asc":None, "planets":[]},
+            "3":{"sign_num":0, "asc":None, "planets":[]},
+            "4":{"sign_num":0, "asc":None, "planets":[]},
+            "5":{"sign_num":0, "asc":None, "planets":[]},
+            "6":{"sign_num":0, "asc":None, "planets":[]},
+            "7":{"sign_num":0, "asc":None, "planets":[]},
+            "8":{"sign_num":0, "asc":None, "planets":[]},
+            "9":{"sign_num":0, "asc":None, "planets":[]},
+            "10":{"sign_num":0, "asc":None, "planets":[]},
+            "11":{"sign_num":0, "asc":None, "planets":[]},
+            "12":{"sign_num":0, "asc":None, "planets":[]}
+        }
+        first_house = 0
+        for item in lagnaKundli:
+            if len(lagnaKundli[item]["planets"]) != 0 and "Mo" in lagnaKundli[item]["planets"]:
+                first_house = lagnaKundli[item]["sign_num"]
+                break
+        
+        houses["1"]["sign_num"] = first_house
+        for i in range(2,13):
+            first_house += 1
+            if first_house > 12:
+                first_house = 1
+            houses[str(i)]["sign_num"] = first_house
+            if houses[str(i)]["sign_num"] == lagnaKundli["1"]["sign_num"]:
+                houses[str(i)]["asc"] = lagnaKundli["1"]["asc"]
+        
+        for item in lagnaKundli:
+             if len(lagnaKundli[item]["planets"]) != 0:
+                for house in houses:
+                    if houses[house]["sign_num"] == lagnaKundli[item]["sign_num"]:
+                        for planet in lagnaKundli[item]["planets"]:
+                            houses[house]["planets"].append(planet)
+        return houses
+
     def get_name(self):
         data = self.app_entry.ent_name.get()
         if len(data) == 0:
@@ -271,3 +310,6 @@ class App:
                 out += data[i]
         
         return out
+
+
+
