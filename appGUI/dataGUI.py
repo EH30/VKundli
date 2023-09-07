@@ -1,8 +1,10 @@
+import swisseph as swe
 import tkinter
 import appGUI.kundliGUI
 from AstroKundli import GKundli
 from tkinter import messagebox, ttk
 
+swe.set_ephe_path("resources\\swefiles")
 class AppButton:
     def __init__(self, root, command_a):
         self.ent_btn_enter = tkinter.Button(root, text="Enter", command=command_a, height=3, width=16)
@@ -114,6 +116,13 @@ class App:
         appGUI.kundliGUI.KundliGUI(self.top, birth_chart, navamsa_chart,
                                     transit_chart, moon_chart, self.image_pos, self.kundli_design, name, year, month, day, hour, minute, lat, lon, utc)
     
+    def get_name(self):
+        data = self.app_entry.ent_name.get()
+        if len(data) == 0:
+            return -1 
+        
+        return data.strip()
+    
     def get_moon_chart(self, lagnaKundli):
         houses = {
             "1":{"sign_num":0, "asc":None, "planets":[]},
@@ -152,12 +161,6 @@ class App:
                             houses[house]["planets"].append(planet)
         return houses
 
-    def get_name(self):
-        data = self.app_entry.ent_name.get()
-        if len(data) == 0:
-            return -1 
-        
-        return data.strip()
     
     def get_start_count(self, sign_num, pos, current_house):
         if sign_num in self.navamasa_mfd["move"]:
@@ -310,6 +313,4 @@ class App:
                 out += data[i]
         
         return out
-
-
 
