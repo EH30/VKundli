@@ -92,10 +92,10 @@ class App:
         if day < 0:
             messagebox.showerror("Error day", "Inavlid day error code: {0}".format(day))
             return -1
-        if lat < 0:
+        if type(lat) != float:
             messagebox.showerror("Error Latitude", "Inavlid Latitude error code: {0}".format(lat))
             return -1
-        if lon < 0:
+        if type(lon) != float:
             messagebox.showerror("Error Longitude", "Inavlid Longitude error code: {0}".format(lon))
             return -1
         if type(utc) == int and utc < 0:
@@ -307,10 +307,4 @@ class App:
         if len(data) == 0:
             return -1 
         
-        out = ""
-        for i in range(len(data)):
-            if data[i] == ":" or data[i].isnumeric():
-                out += data[i]
-        
-        return out
-
+        return data
